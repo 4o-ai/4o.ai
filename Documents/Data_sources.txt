@@ -1,0 +1,16 @@
+04/09/2025, 12:10 AM:
+
+    1. A combination of agents which generates a in depth market research paper, agents would be like:
+        1. Sentiment analyser: Social media and people 
+        2. Facts analyser: Current affairs and News
+        3. Quantitive analyser: Technical indicators
+
+
+
+
+Directory structure:
+
+1. Modelling 
+    1. Agents
+        1. Sentiments analyser: social median scrapping
+2. UI
