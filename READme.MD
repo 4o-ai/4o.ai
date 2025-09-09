@@ -1,6 +1,6 @@
 # AI Financial Planning Agent - Proof of Concept Document
 
-## Executive Summary
+## Summary
 
 This document outlines the development of an AI-powered financial planning agent that leverages specialized analytical tools to create comprehensive investment strategies. The system utilizes a multi-agent architecture to autonomously analyze market sentiment, current affairs, and historical data, integrating a wide array of modular tools that can be developed or integrated using the CrewAI or AutoGen framework.
 
