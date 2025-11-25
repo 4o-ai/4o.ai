@@ -80,20 +80,3 @@ class FundamentalAnalysisAgent:
         template = PromptTemplate.from_template(PROMPT)
         rendered_prompt_template = template.invoke({"tools":self.tools}).to_string()
         return rendered_prompt_template
-
-# async def main():
-#     api_key = os.getenv("GOOGLE_API_KEY")
-#     if not api_key:
-#         raise ValueError("GOOGLE_API_KEY environment variable required")
-        
-#     llm = ChatGoogleGenerativeAI(
-#         model="gemini-2.5-flash", 
-#         api_key=api_key
-#     )
-#     analysis_query = f"Perform fundamental analysis for GOOGL"
-#     agent = await FundamentalAnalysisAgent(llm)._build_agent_executor()
-#     result = await agent.ainvoke({"messages": [analysis_query]})
-
-#     print(result['messages'][-1].content)
-# if __name__=="__main__":
-#     asyncio.run(main())

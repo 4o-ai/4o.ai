@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 from typing import Dict, Any, Optional, List, Tuple
 from enum import Enum
-import re
 
 from langchain.chat_models.base import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
@@ -296,53 +295,4 @@ class InvestmentAggregator:
         
         return json.dumps(output, indent=2)
 
-# Example usage and testing
-# if __name__ == "__main__":
-#     # Example usage - Note: In real usage, pass your actual LLM instance
-#     # from langchain_google_genai import ChatGoogleGenerativeAI
-#     # import os
-#     # llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=os.getenv("GOOGLE_API_KEY"))
-#     # aggregator = InvestmentAggregator(llm=llm)
-    
-#     # For demo purposes, we'll simulate without LLM
-#     aggregator = InvestmentAggregator(llm=None)
-#     print("=== OPTIMIZED AGGREGATOR DEMO ===")
-#     print("✅ Uses ONLY 1 LLM call that does EVERYTHING:")
-#     print("   • Scores all agent outputs")
-#     print("   • Calculates weighted average")
-#     print("   • Makes BUY/SELL/HOLD recommendation")
-#     print("   • Generates professional justification")
-#     print()
-#     print("💰 50% cheaper than 2-call approach!")
-#     print("⚡ Faster execution with single API call")
-#     print("🧠 Holistic analysis sees all data together")
-#     print()
-#     print("Note: Running demo without LLM - will use fallback")
-#     print()
-    
-#     # Mock agent results for testing
-#     technical_result = {
-#         "analysis": "Technical indicators show bullish momentum with RSI oversold and golden cross formation",
-#         "indicators": {"RSI": 28, "MACD": "bullish_crossover"}
-#     }
-    
-#     fundamental_result = {
-#         "analysis": "Strong revenue growth of 15% YoY, improving margins, and low debt levels",
-#         "metrics": {"PE_ratio": 18, "ROE": 0.22, "debt_ratio": 0.3}
-#     }
-    
-#     sentiment_result = {
-#         "analysis": "Positive news sentiment with upgrade from analysts and partnership announcements",
-#         "sentiment_score": 0.75
-#     }
-    
-#     # Aggregate results
-#     final_result = aggregator.aggregate(
-#         technical_result=technical_result,
-#         fundamental_result=fundamental_result,
-#         sentiment_result=sentiment_result,
-#         ticker="AAPL"
-#     )
-    
-#     print("=== AGGREGATED INVESTMENT RECOMMENDATION ===")
-#     print(aggregator.to_json(final_result))
+
