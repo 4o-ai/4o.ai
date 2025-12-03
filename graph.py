@@ -1,6 +1,7 @@
 import asyncio
 from email import message
 import os
+from os.path import isfile
 from typing import Any, Dict
 from langchain_google_genai import ChatGoogleGenerativeAI
 from agents import sentimental_analyst_agent
@@ -91,7 +92,7 @@ class Graph:
         
         result = self.aggregator._analyze(agent_results, state.ticker)
         return {"aggregated_analysis": result}
-        
+
 
     async def build_graph(self, ticker: str):
 
@@ -112,9 +113,9 @@ class Graph:
         graph.add_edge("aggregator", END)
         # graph.add_edge("sentimental_analysis", END)
 
-        parallel_workflow = graph.compile()
-
-        display(Image(parallel_workflow.get_graph().draw_mermaid_png()))
+        parallel_workflow: CompiledStateGraph = graph.compile()
+        if not os.path.isfile("graph.png"):
+            display(Image(parallel_workflow.get_graph().draw_mermaid_png(output_file_path="graph.png")))
 
         try:
             state = await parallel_workflow.ainvoke({"ticker": ticker})

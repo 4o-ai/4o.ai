@@ -76,6 +76,8 @@ class FundamentalAnalysisAgent:
 
             When a user provides a ticker symbol, conduct a thorough fundamental analysis using the available tools. 
             Present your findings in a clear, structured manner with specific metrics and actionable insights.
+
+            Don't include any other verbose explanatiouns and don't include the markdown syntax anywhere.
         """
         template = PromptTemplate.from_template(PROMPT)
         rendered_prompt_template = template.invoke({"tools":self.tools}).to_string()

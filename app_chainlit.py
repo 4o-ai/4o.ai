@@ -4,14 +4,12 @@ Conversational interface for Technical, Fundamental, and Sentiment Analysis
 """
 
 import textwrap   
-from datetime import datetime
 from typing import Dict, Any, Optional
 import json
 from dotenv import load_dotenv
 import nest_asyncio
 
 import chainlit as cl
-from sympy import N
 from graph import Graph
 from agents.aggregator import AggregatedResult
 from chainlit import make_async
@@ -46,65 +44,72 @@ async def analyze_stock(ticker: str) -> AggregatedResult:
 
 
 def format_recommendation_message(result: AggregatedResult) -> str:
-    """Format the analysis result into a rich text message"""
+    """Format the analysis result into a balanced, professional summary."""
     
     rec = result.recommendation.value
-    
-    rec_emoji = {
-        "BUY": "🟢",
-        "SELL": "🔴", 
-        "HOLD": "🟡"
-    }
-    
-    # 1. Use textwrap.dedent to strip the function's indentation from the string
-    message = textwrap.dedent(f"""
-        # {rec_emoji.get(rec, '⚪')} Investment Recommendation: *{rec}*
+    rec_emoji = {"BUY": "🟢", "SELL": "🔴", "HOLD": "🟡"}.get(rec, "⚪")
 
-        ## 📊 Key Metrics
-        - **Confidence**: {result.confidence:.1%}
-        - **Overall Score**: {result.overall_score:.2f}/1.0
+    # Helper for visual bars
+    def make_bar(value: float, length: int = 10) -> str:
+        value = max(0.0, min(1.0, value))
+        filled = int(value * length)
+        return "▓" * filled + "░" * (length - filled)
 
-        ## 📝 Justification
-        {result.justification}
+    bar_conf = make_bar(result.confidence)
+    bar_score = make_bar(result.overall_score)
 
-        ---
-
-        ## 📈 Analysis Breakdown
+    # 1. Compact Header with Integrated Verdict
+    msg = textwrap.dedent(f"""
+        ### {rec_emoji} Verdict: **{rec}**
+        
+        **Target:** `{result.ticker}`  |  **Confidence:** `{result.confidence:.1%}`
     """)
-    
+
+    # 2. Executive Summary (Justification)
+    msg += textwrap.dedent(f"""
+        > {result.justification}
+    """)
+
+    # 3. Scorecard Table
+    msg += textwrap.dedent(f"""
+        | Metric | Score |
+        | :--- | :--- |
+        | **Overall** | `{result.overall_score:.2f}` |
+        | **Confidence** | `{result.confidence:.1%}` |
+    """)
+
+    # 4. Agent Analysis Breakdown
     scores = result.metadata.get('individual_scores', {})
     
-    # 2. Fix the indentation for this block as well
-    # I also replaced the custom 'Score' text with a standard bullet list for better readability
-    message += textwrap.dedent(f"""
-        ### Technical Analysis
-        - **Score**: {scores.get('technical', 0):.2f}
+    def format_row(label, key):
+        val = scores.get(key, 0)
+        return f"| {label} | `{val:.2f}` |"
 
-        ### Fundamental Analysis  
-        - **Score**: {scores.get('fundamental', 0):.2f}
-
-        ### Sentiment Analysis
-        - **Score**: {scores.get('sentiment', 0):.2f}
-
-        ---
-
-        ## 🔍 Supporting Evidence
+    msg += textwrap.dedent(f"""
+        ### 🤖 Factor Analysis
+        | Component | Score |
+        | :--- | :--- |
+        {format_row("📈 Technical", "technical")}
+        {format_row("💰 Fundamental", "fundamental")}
+        {format_row("📰 Sentiment", "sentiment")}
     """)
+
+    # 5. Data Sources (Fixed: Using clean Markdown instead of broken HTML)
+    msg += "\n### 🔍 Data Sources\n"
     
     for agent_type, evidence in result.supporting_evidence.items():
-        # Truncate evidence for display
-        clean_evidence = str(evidence).replace('\n', ' ').strip()
-        display_evidence = clean_evidence[:500] + ('...' if len(clean_evidence) > 500 else '')
+        # Clean up evidence text
+        clean_ev = str(evidence).replace('\n', ' ').strip()
+        display_ev = clean_ev[:500] + "..." if len(clean_ev) > 500 else clean_ev
         
-        # 3. Ensure this block is also clean
-        message += textwrap.dedent(f"""
-            ### {agent_type.title()} Analysis
-            {display_evidence}
-
+        # Use H4 headers and Blockquotes for clear, fail-safe formatting
+        msg += textwrap.dedent(f"""
+            #### 📄 {agent_type.title()} Report
+            > {display_ev}
+            
         """)
 
-    return message
-
+    return msg
 
 def create_download_elements(result: AggregatedResult):
     """Create downloadable files for the analysis"""
